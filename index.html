@@ -1,0 +1,2310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chezz - Stream Movies & TV Shows</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-bg: #0f0f0f;
+      --secondary-bg: #1a1a1a;
+      --tertiary-bg: #2a2a2a;
+      --primary-text: #ffffff;
+      --secondary-text: #b3b3b3;
+      --accent-color: #e50914;
+      --accent-hover: #f40612;
+      --card-hover: rgba(255, 255, 255, 0.1);
+      --border-radius: 8px;
+      --transition: all 0.3s ease;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      background-color: var(--primary-bg);
+      color: var(--primary-text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* ========== NAVBAR ========== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: linear-gradient(to bottom, rgba(15, 15, 15, 0.9), transparent);
+      backdrop-filter: blur(4px);
+      padding: 1.2rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--accent-color);
+      letter-spacing: -1px;
+      cursor: pointer;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      color: var(--primary-text);
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: var(--transition);
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--accent-color);
+      border-bottom-color: var(--accent-color);
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .search-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input {
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--border-radius);
+      padding: 0.6rem 1rem;
+      color: var(--primary-text);
+      font-size: 0.9rem;
+      width: 250px;
+      transition: var(--transition);
+    }
+
+    .search-input:focus {
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.15);
+      border-color: var(--accent-color);
+      width: 300px;
+    }
+
+    .search-input::placeholder {
+      color: var(--secondary-text);
+    }
+
+    /* ========== HERO SLIDER ========== */
+    .hero-slider {
+      position: relative;
+      width: 100%;
+      height: 500px;
+      overflow: hidden;
+      margin-bottom: 3rem;
+    }
+
+    .hero-slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 0.8s ease-in-out;
+    }
+
+    .hero-slide.active {
+      opacity: 1;
+    }
+
+    .hero-slide::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(15, 15, 15, 0.7), rgba(15, 15, 15, 0.3));
+    }
+
+    .hero-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      padding: 3rem;
+      color: var(--primary-text);
+      max-width: 50%;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background-color: var(--accent-color);
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+    }
+
+    .hero-meta {
+      font-size: 0.95rem;
+      color: var(--secondary-text);
+      margin-bottom: 1rem;
+    }
+
+    .hero-overview {
+      font-size: 1rem;
+      color: var(--secondary-text);
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+      max-width: 90%;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.75rem 2rem;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background-color: var(--accent-color);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+      transform: scale(1.05);
+    }
+
+    .btn-secondary {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .slider-nav {
+      position: absolute;
+      bottom: 2rem;
+      right: 3rem;
+      display: flex;
+      gap: 1rem;
+      z-index: 10;
+    }
+
+    .slider-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .slider-dot.active {
+      background-color: var(--accent-color);
+      width: 30px;
+      border-radius: 6px;
+    }
+
+    /* ========== CONTENT ROWS ========== */
+    .content-section {
+      padding: 0 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--primary-text);
+    }
+
+    .row-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .row-scroll {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding: 1rem 0;
+      scrollbar-width: none;
+    }
+
+    .row-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .row-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      transition: var(--transition);
+    }
+
+    .row-arrow:hover {
+      background-color: rgba(0, 0, 0, 0.9);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .row-arrow.left {
+      left: 0;
+    }
+
+    .row-arrow.right {
+      right: 0;
+    }
+
+    /* ========== CARD ========== */
+    .card {
+      flex-shrink: 0;
+      width: 180px;
+      height: 270px;
+      background-color: var(--secondary-bg);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .card:hover {
+      transform: scale(1.08) translateY(-10px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+    }
+
+    .card-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background-color: var(--tertiary-bg);
+    }
+
+    .card-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 1rem;
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .card:hover .card-overlay {
+      opacity: 1;
+    }
+
+    .card-badge {
+      display: inline-block;
+      background-color: var(--accent-color);
+      color: white;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      align-self: flex-start;
+      text-transform: uppercase;
+    }
+
+    .card-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .card-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      line-height: 1.2;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-meta {
+      font-size: 0.75rem;
+      color: var(--secondary-text);
+    }
+
+    .card-overview {
+      font-size: 0.8rem;
+      color: var(--secondary-text);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.3;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .card-action-btn {
+      flex: 1;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 4px;
+      background-color: var(--accent-color);
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: var(--transition);
+    }
+
+    .card-action-btn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .card-watchlist-btn {
+      background-color: rgba(255, 255, 255, 0.2);
+      padding: 0.5rem 0.75rem;
+    }
+
+    .card-watchlist-btn.active {
+      background-color: var(--accent-color);
+    }
+
+    .progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background-color: var(--accent-color);
+      border-radius: 0 0 var(--border-radius) 0;
+    }
+
+    /* ========== DETAIL PAGE ========== */
+    .detail-backdrop {
+      width: 100%;
+      height: 500px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      margin-bottom: 2rem;
+    }
+
+    .detail-backdrop::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to bottom, transparent, var(--primary-bg));
+    }
+
+    .detail-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .detail-header {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .detail-poster {
+      width: 200px;
+      height: 300px;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    }
+
+    .detail-poster img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .detail-info h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .detail-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      color: var(--secondary-text);
+      font-size: 0.95rem;
+    }
+
+    .detail-rating {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--accent-color);
+      font-weight: 700;
+    }
+
+    .detail-genres {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .genre-badge {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+    }
+
+    .detail-overview {
+      font-size: 1rem;
+      color: var(--secondary-text);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      max-width: 100%;
+    }
+
+    .detail-actions {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    .detail-actions .btn {
+      padding: 0.75rem 2rem;
+      font-size: 1rem;
+    }
+
+    .player-container {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto 3rem;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    }
+
+    video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ========== GRID LAYOUT ========== */
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.5rem;
+      padding: 0 2rem;
+      margin-bottom: 3rem;
+    }
+
+    /* ========== SEARCH & PAGES ========== */
+    .page-container {
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 0.6rem 1.2rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background-color: transparent;
+      color: var(--primary-text);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .filter-btn.active {
+      background-color: var(--accent-color);
+      border-color: var(--accent-color);
+    }
+
+    .filter-btn:hover {
+      border-color: var(--accent-color);
+    }
+
+    /* ========== WATCHLIST PAGE ========== */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .empty-state-title {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-state-text {
+      color: var(--secondary-text);
+      margin-bottom: 2rem;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem;
+      }
+
+      .nav-links {
+        gap: 1rem;
+        font-size: 0.9rem;
+      }
+
+      .search-input {
+        width: 150px;
+      }
+
+      .search-input:focus {
+        width: 200px;
+      }
+
+      .hero-slider {
+        height: 350px;
+      }
+
+      .hero-title {
+        font-size: 2rem;
+      }
+
+      .hero-content {
+        max-width: 100%;
+        padding: 2rem;
+      }
+
+      .detail-header {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .detail-poster {
+        width: 150px;
+        height: 225px;
+      }
+
+      .detail-info h1 {
+        font-size: 1.8rem;
+      }
+
+      .card {
+        width: 150px;
+        height: 225px;
+      }
+
+      .content-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+        padding: 0 1rem;
+      }
+
+      .content-section {
+        padding: 0 1rem;
+      }
+
+      .row-arrow {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .navbar-left {
+        gap: 1rem;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero-slider {
+        height: 250px;
+        margin-bottom: 2rem;
+      }
+
+      .hero-title {
+        font-size: 1.5rem;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .card {
+        width: 140px;
+        height: 210px;
+      }
+
+      .content-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .row-arrow {
+        display: none;
+      }
+
+      .detail-info h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useCallback, createContext, useContext } = React;
+
+    // ========== CONFIGURATION ==========
+    const CONFIG = {
+      TMDB_API_KEY: 'b03e524ee12ec2c9b8a5e82add72cb8d',
+      TMDB_BASE_URL: 'https://api.themoviedb.org/3',
+      TMDB_IMAGE_BASE: 'https://image.tmdb.org/t/p',
+      STREAMING_API_MOVIE: 'https://rivestream.org/embed?type=movie&id={tmdbId}',
+      STREAMING_API_TV: 'https://rivestream.org/embed?type=tv&id={tmdbId}&season={season}&episode={episode}'
+    };
+
+    // ========== STORAGE UTILITIES ==========
+    const StorageManager = {
+      getWatchlist: () => {
+        try {
+          return JSON.parse(localStorage.getItem('watchlist') || '[]');
+        } catch {
+          return [];
+        }
+      },
+
+      isInWatchlist: (id) => {
+        return StorageManager.getWatchlist().some(item => item.id === id);
+      },
+
+      addToWatchlist: (item) => {
+        const watchlist = StorageManager.getWatchlist();
+        if (!watchlist.find(w => w.id === item.id)) {
+          watchlist.push(item);
+          localStorage.setItem('watchlist', JSON.stringify(watchlist));
+        }
+      },
+
+      removeFromWatchlist: (id) => {
+        const watchlist = StorageManager.getWatchlist().filter(item => item.id !== id);
+        localStorage.setItem('watchlist', JSON.stringify(watchlist));
+      },
+
+      getContinueWatching: () => {
+        try {
+          return JSON.parse(localStorage.getItem('continueWatching') || '[]');
+        } catch {
+          return [];
+        }
+      },
+
+      updateProgress: (item, positionSeconds, durationSeconds) => {
+        const continueWatching = StorageManager.getContinueWatching();
+        const progress = durationSeconds > 0 ? positionSeconds / durationSeconds : 0;
+
+        if (progress > 0.95) {
+          StorageManager.clearProgress(item.id);
+          return;
+        }
+
+        const index = continueWatching.findIndex(entry => entry.id === item.id);
+        const progressItem = {
+          ...item,
+          progress,
+          lastPositionSeconds: positionSeconds,
+          durationSeconds,
+          updatedAt: Date.now()
+        };
+
+        if (index >= 0) {
+          continueWatching[index] = progressItem;
+        } else {
+          continueWatching.push(progressItem);
+        }
+
+        localStorage.setItem('continueWatching', JSON.stringify(continueWatching));
+      },
+
+      clearProgress: (id) => {
+        const continueWatching = StorageManager.getContinueWatching().filter(
+          entry => entry.id !== id
+        );
+        localStorage.setItem('continueWatching', JSON.stringify(continueWatching));
+      },
+
+      getRecentlyViewed: () => {
+        try {
+          return JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+        } catch {
+          return [];
+        }
+      },
+
+      addRecentlyViewed: (item) => {
+        const recentlyViewed = StorageManager.getRecentlyViewed();
+        recentlyViewed.unshift({ ...item, updatedAt: Date.now() });
+        const unique = Array.from(
+          new Map(recentlyViewed.map(item => [item.id, item])).values()
+        ).slice(0, 50);
+        localStorage.setItem('recentlyViewed', JSON.stringify(unique));
+      }
+    };
+
+    // ========== API CALLS ==========
+    const API = {
+      async getTrending() {
+        const response = await axios.get(
+          `${CONFIG.TMDB_BASE_URL}/trending/all/week?api_key=${CONFIG.TMDB_API_KEY}`
+        );
+        return response.data.results.slice(0, 20);
+      },
+
+      async getPopularMovies() {
+        const response = await axios.get(
+          `${CONFIG.TMDB_BASE_URL}/movie/popular?api_key=${CONFIG.TMDB_API_KEY}`
+        );
+        return response.data.results;
+      },
+
+      async getTopRatedMovies() {
+        const response = await axios.get(
+          `${CONFIG.TMDB_BASE_URL}/movie/top_rated?api_key=${CONFIG.TMDB_API_KEY}`
+        );
+        return response.data.results;
+      },
+
+      async getUpcomingMovies() {
+        const response = await axios.get(
+          `${CONFIG.TMDB_BASE_URL}/movie/upcoming?api_key=${CONFIG.TMDB_API_KEY}`
+        );
+        return response.data.results;
+      },
+
+      async getPopularTV() {
+        const response = await axios.get(
+          `${CONFIG.TMDB_BASE_URL}/tv/popular?api_key=${CONFIG.TMDB_API_KEY}`
+        );
+        return response.data.results;
+      },
+
+      async getTopRatedTV() {
+        const response = await axios.get(
+          `${CONFIG.TMDB_BASE_URL}/tv/top_rated?api_key=${CONFIG.TMDB_API_KEY}`
+        );
+        return response.data.results;
+      },
+
+      async getMoviesByGenre(genreId) {
+        const response = await axios.get(
+          `${CONFIG.TMDB_BASE_URL}/discover/movie?api_key=${CONFIG.TMDB_API_KEY}&with_genres=${genreId}&sort_by=popularity.desc`
+        );
+        return response.data.results;
+      },
+
+      async getTVByGenre(genreId) {
+        const response = await axios.get(
+          `${CONFIG.TMDB_BASE_URL}/discover/tv?api_key=${CONFIG.TMDB_API_KEY}&with_genres=${genreId}&sort_by=popularity.desc`
+        );
+        return response.data.results;
+      },
+
+      async getMovieDetail(id) {
+        const response = await axios.get(
+          `${CONFIG.TMDB_BASE_URL}/movie/${id}?api_key=${CONFIG.TMDB_API_KEY}&append_to_response=images`
+        );
+        return response.data;
+      },
+
+      async getTVDetail(id) {
+        const response = await axios.get(
+          `${CONFIG.TMDB_BASE_URL}/tv/${id}?api_key=${CONFIG.TMDB_API_KEY}&append_to_response=images`
+        );
+        return response.data;
+      },
+
+      async search(query) {
+        const response = await axios.get(
+          `${CONFIG.TMDB_BASE_URL}/search/multi?api_key=${CONFIG.TMDB_API_KEY}&query=${encodeURIComponent(query)}`
+        );
+        return response.data.results.filter(result => result.media_type !== 'person').slice(0, 30);
+      },
+
+      async getRecommendations(type, id) {
+        const response = await axios.get(
+          `${CONFIG.TMDB_BASE_URL}/${type}/${id}/recommendations?api_key=${CONFIG.TMDB_API_KEY}`
+        );
+        return response.data.results.slice(0, 10);
+      }
+    };
+
+    // ========== HELPER FUNCTIONS ==========
+    const getItemId = (item) => {
+      const type = item.media_type || (item.title ? 'movie' : 'tv');
+      return `${type}-${item.id}`;
+    };
+
+    const formatItemData = (item) => {
+      const isMovie = item.media_type === 'movie' || item.title;
+      return {
+        id: getItemId(item),
+        tmdbId: item.id,
+        type: isMovie ? 'movie' : 'tv',
+        title: item.title || item.name,
+        poster: item.poster_path || '',
+        backdrop: item.backdrop_path || '',
+        year: isMovie ? item.release_date?.slice(0, 4) : item.first_air_date?.slice(0, 4),
+        rating: item.vote_average?.toFixed(1) || 'N/A',
+        overview: item.overview || '',
+        genres: item.genres?.map(g => g.name) || []
+      };
+    };
+
+    const getPosterUrl = (path, size = 'w342') => {
+      return path ? `${CONFIG.TMDB_IMAGE_BASE}/${size}${path}` : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="342" height="513"%3E%3Crect fill="%232a2a2a" width="342" height="513"/%3E%3C/svg%3E';
+    };
+
+    const getStreamUrl = (item, season = 1, episode = 1) => {
+      if (item.type === 'movie') {
+        return CONFIG.STREAMING_API_MOVIE.replace('{tmdbId}', item.tmdbId);
+      }
+      return CONFIG.STREAMING_API_TV
+        .replace('{tmdbId}', item.tmdbId)
+        .replace('{season}', season)
+        .replace('{episode}', episode);
+    };
+
+    const EpisodeModal = ({ type, item, season, episode, onClose }) => {
+      const getEmbedUrl = () => {
+        if (item.type === 'movie') {
+          return `https://rivestream.org/embed?type=movie&id=${item.tmdbId}`;
+        }
+        return `https://rivestream.org/embed?type=tv&id=${item.tmdbId}&season=${season}&episode=${episode}`;
+      };
+
+      return (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.98)',
+          zIndex: 3000,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '2rem'
+        }}>
+          <button
+            onClick={onClose}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '30px',
+              background: 'none',
+              border: 'none',
+              color: 'white',
+              fontSize: '3rem',
+              cursor: 'pointer',
+              zIndex: 3001
+            }}
+          >
+            ✕
+          </button>
+          <div style={{ width: '100%', maxWidth: '1200px' }}>
+            <iframe
+              src={getEmbedUrl()}
+              width="100%"
+              height="600"
+              allowFullScreen
+              style={{ borderRadius: '8px', display: 'block', border: 'none' }}
+            />
+          </div>
+        </div>
+      );
+    };
+
+    // ========== COMPONENTS ==========
+    const Navbar = ({ currentPage, onNavigate }) => {
+      const searchRef = useRef(null);
+      const [searchQuery, setSearchQuery] = useState('');
+
+      useEffect(() => {
+        const handleKeyPress = (e) => {
+          if (e.key === '/' && document.activeElement !== searchRef.current) {
+            e.preventDefault();
+            searchRef.current?.focus();
+          }
+        };
+        window.addEventListener('keydown', handleKeyPress);
+        return () => window.removeEventListener('keydown', handleKeyPress);
+      }, []);
+
+      const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+          onNavigate('search', { q: searchQuery });
+          setSearchQuery('');
+        }
+      };
+
+      return (
+        <nav className="navbar">
+          <div className="navbar-left">          <div className="logo" onClick={() => onNavigate('home')}>
+            CHEZZ
+          </div>
+            <ul className="nav-links">
+              <li>
+                <a
+                  href="#"
+                  className={currentPage === 'home' ? 'active' : ''}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('home');
+                  }}
+                >
+                  Home
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className={currentPage === 'movies' ? 'active' : ''}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('movies');
+                  }}
+                >
+                  Movies
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className={currentPage === 'tv' ? 'active' : ''}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('tv');
+                  }}
+                >
+                  TV Shows
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className={currentPage === 'trending' ? 'active' : ''}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('trending');
+                  }}
+                >
+                  Trending
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className={currentPage === 'watchlist' ? 'active' : ''}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate('watchlist');
+                  }}
+                >
+                  Watchlist
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div className="navbar-right">
+            <form onSubmit={handleSearch} className="search-container">
+              <input
+                ref={searchRef}
+                type="text"
+                className="search-input"
+                placeholder="Search movies and TV shows..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </form>
+          </div>
+        </nav>
+      );
+    };
+
+    const Card = ({ item, onNavigate, onPlay }) => {
+      const isInWatchlist = StorageManager.isInWatchlist(item.id);
+      const continueWatching = StorageManager.getContinueWatching().find(
+        cw => cw.id === item.id
+      );
+
+      const handleWatchlistToggle = (e) => {
+        e.stopPropagation();
+        if (isInWatchlist) {
+          StorageManager.removeFromWatchlist(item.id);
+        } else {
+          StorageManager.addToWatchlist(item);
+        }
+        // Force re-render
+        window.dispatchEvent(new CustomEvent('watchlistUpdated'));
+      };
+
+      return (
+        <div
+          className="card"
+          onClick={() => onNavigate(`detail-${item.type}`, { id: item.tmdbId })}
+        >
+          <img
+            src={getPosterUrl(item.poster)}
+            alt={item.title}
+            className="card-image"
+          />
+          {continueWatching && (
+            <div
+              className="progress-bar"
+              style={{ width: `${continueWatching.progress * 100}%` }}
+            />
+          )}
+          <div className="card-overlay">
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span className="card-badge">{item.type.toUpperCase()}</span>
+              <button
+                className={`card-watchlist-btn ${isInWatchlist ? 'active' : ''}`}
+                onClick={handleWatchlistToggle}
+                title={isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}
+              >
+                ♥
+              </button>
+            </div>
+            <div className="card-info">
+              <div className="card-title">{item.title}</div>
+              <div className="card-meta">{item.year} - {item.rating}</div>
+              <div className="card-overview">{item.overview}</div>
+              <div className="card-actions">
+                <button className="card-action-btn" onClick={(e) => {
+                  e.stopPropagation();
+                  onNavigate(`detail-${item.type}`, { id: item.tmdbId });
+                }}>
+                  Details
+                </button>
+                <button className="card-action-btn" onClick={(e) => {
+                  e.stopPropagation();
+                  onPlay(item);
+                }}>
+                  ▶ Play
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const Row = ({ title, items, onNavigate, onPlay }) => {
+      const scrollRef = useRef(null);
+
+      const scroll = (direction) => {
+        if (scrollRef.current) {
+          const scrollAmount = 400;
+          scrollRef.current.scrollBy({
+            left: direction === 'left' ? -scrollAmount : scrollAmount,
+            behavior: 'smooth'
+          });
+        }
+      };
+
+      return (
+        <div className="content-section">
+          <div className="section-title">{title}</div>
+          <div className="row-container">
+            <button className="row-arrow left" onClick={() => scroll('left')}>
+              ‹
+            </button>
+            <div className="row-scroll" ref={scrollRef}>
+              {items.map(item => (
+                <Card
+                  key={item.id}
+                  item={item}
+                  onNavigate={onNavigate}
+                  onPlay={onPlay}
+                />
+              ))}
+            </div>
+            <button className="row-arrow right" onClick={() => scroll('right')}>
+              ›
+            </button>
+          </div>
+        </div>
+      );
+    };
+
+    const HeroSlider = ({ items, onNavigate, onPlay }) => {
+      const [currentIndex, setCurrentIndex] = useState(0);
+
+      useEffect(() => {
+        const interval = setInterval(() => {
+          setCurrentIndex((prev) => (prev + 1) % items.length);
+        }, 5000);
+        return () => clearInterval(interval);
+      }, [items.length]);
+
+      if (!items.length) return null;
+
+      const current = items[currentIndex];
+      const backdropUrl = getPosterUrl(current.backdrop, 'w1280');
+
+      return (
+        <div className="hero-slider">
+          <div className="hero-slide active" style={{
+            backgroundImage: `url('${backdropUrl}')`
+          }} />
+          <div className="hero-content">
+            <span className="hero-badge">{current.type?.toUpperCase() || 'FEATURED'}</span>
+            <h1 className="hero-title">{current.title}</h1>
+            <div className="hero-meta">
+              {current.year} • {current.rating} ⭐
+            </div>
+            <div className="hero-overview">{current.overview}</div>
+            <div className="hero-buttons">
+              <button
+                className="btn btn-primary"
+                onClick={() => onPlay(current)}
+              >
+                ▶ Play Now
+              </button>
+              <button
+                className="btn btn-secondary"
+                onClick={() => onNavigate(`detail-${current.type}`, { id: current.tmdbId })}
+              >
+                More Info
+              </button>
+            </div>
+          </div>
+          <div className="slider-nav">
+            {items.slice(0, 5).map((_, idx) => (
+              <div
+                key={idx}
+                className={`slider-dot ${idx === currentIndex ? 'active' : ''}`}
+                onClick={() => setCurrentIndex(idx)}
+              />
+            ))}
+          </div>
+        </div>
+      );
+    };
+
+    const Player = ({ item, onClose }) => {
+      const getStreamUrl = (movie) => {
+        return `https://rivestream.org/embed?type=movie&id=${movie.tmdbId}`;
+      };
+
+      const streamUrl = getStreamUrl(item);
+
+      return (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.95)',
+          zIndex: 2000,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <div style={{ width: '100%', maxWidth: '1200px', position: 'relative' }}>
+            <button
+              onClick={onClose}
+              style={{
+                position: 'absolute',
+                top: '-40px',
+                right: 0,
+                background: 'none',
+                border: 'none',
+                color: 'white',
+                fontSize: '2rem',
+                cursor: 'pointer',
+                zIndex: 2001
+              }}
+            >
+              ✕
+            </button>
+            <div className="player-container">
+              <iframe
+                src={streamUrl}
+                width="100%"
+                height="600"
+                allowFullScreen
+                style={{ display: 'block', border: 'none', borderRadius: '8px' }}
+              />
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const DetailPage = ({ type, id, onNavigate, onPlay }) => {
+      const [detail, setDetail] = useState(null);
+      const [recommendations, setRecommendations] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [episodeModal, setEpisodeModal] = useState(null);
+      const [showDetails, setShowDetails] = useState(null);
+      const [selectedSeason, setSelectedSeason] = useState(1);
+      const [episodes, setEpisodes] = useState([]);
+      const [activeTab, setActiveTab] = useState('episodes');
+
+      useEffect(() => {
+        const fetchDetail = async () => {
+          try {
+            const data = type === 'movie'
+              ? await API.getMovieDetail(id)
+              : await API.getTVDetail(id);
+            
+            const formatted = formatItemData(data);
+            setDetail(formatted);
+            
+            if (type === 'tv') {
+              setShowDetails(data);
+              if (data.seasons && data.seasons.length > 0) {
+                fetchEpisodes(id, 1);
+              }
+            }
+
+            StorageManager.addRecentlyViewed(formatted);
+
+            const recs = await API.getRecommendations(type, id);
+            setRecommendations(recs.map(formatItemData));
+          } catch (error) {
+            console.error('Error fetching detail:', error);
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        fetchDetail();
+      }, [type, id]);
+
+      const fetchEpisodes = async (showId, season) => {
+        try {
+          const response = await axios.get(
+            `${CONFIG.TMDB_BASE_URL}/tv/${showId}/season/${season}?api_key=${CONFIG.TMDB_API_KEY}`
+          );
+          setEpisodes(response.data.episodes || []);
+        } catch (error) {
+          console.error('Error fetching episodes:', error);
+          setEpisodes([]);
+        }
+      };
+
+      const handleSeasonChange = (seasonNum) => {
+        setSelectedSeason(seasonNum);
+        fetchEpisodes(id, seasonNum);
+      };
+
+      if (loading || !detail) {
+        return (
+          <div className="page-container" style={{ textAlign: 'center', paddingTop: '100px' }}>
+            <div style={{ color: 'white', fontSize: '1.5rem' }}>Loading...</div>
+          </div>
+        );
+      }
+
+      const isInWatchlist = StorageManager.isInWatchlist(detail.id);
+
+      // Movie detail (original)
+      if (type === 'movie') {
+        return (
+          <div>
+            <div
+              className="detail-backdrop"
+              style={{ backgroundImage: `url('${getPosterUrl(detail.backdrop, 'w1280')}')` }}
+            />
+            <div className="detail-container">
+              <div className="detail-header">
+                <div className="detail-poster">
+                  <img
+                    src={getPosterUrl(detail.poster)}
+                    alt={detail.title}
+                  />
+                </div>
+                <div className="detail-info">
+                  <h1>{detail.title}</h1>
+                  <div className="detail-meta">
+                    <span>{detail.year}</span>
+                    <span>•</span>
+                    <div className="detail-rating">
+                      <span>★</span>
+                      <span>{detail.rating}</span>
+                    </div>
+                  </div>
+                  <div className="detail-genres">
+                    {detail.genres.map(genre => (
+                      <span key={genre} className="genre-badge">{genre}</span>
+                    ))}
+                  </div>
+                  <p className="detail-overview">{detail.overview}</p>
+                  <div className="detail-actions">
+                    <button className="btn btn-primary" onClick={() => onPlay(detail)}>
+                      ▶ Play
+                    </button>
+                    <button
+                      className={`btn ${isInWatchlist ? 'btn-primary' : 'btn-secondary'}`}
+                      onClick={() => {
+                        if (isInWatchlist) {
+                          StorageManager.removeFromWatchlist(detail.id);
+                        } else {
+                          StorageManager.addToWatchlist(detail);
+                        }
+                        window.dispatchEvent(new CustomEvent('watchlistUpdated'));
+                      }}
+                    >
+                      {isInWatchlist ? '♥ In Watchlist' : '♡ Add to Watchlist'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {recommendations.length > 0 && (
+              <Row
+                title="More Like This"
+                items={recommendations}
+                onNavigate={onNavigate}
+                onPlay={onPlay}
+              />
+            )}
+          </div>
+        );
+      }
+
+      // TV show detail with episodes
+      return (
+        <div>
+          {episodeModal && (
+            <EpisodeModal
+              type="tv"
+              item={detail}
+              season={episodeModal.season}
+              episode={episodeModal.episode}
+              onClose={() => setEpisodeModal(null)}
+            />
+          )}
+          
+          <div
+            className="detail-backdrop"
+            style={{ backgroundImage: `url('${getPosterUrl(detail.backdrop, 'w1280')}')` }}
+          />
+          <div className="detail-container">
+            <div className="detail-header">
+              <div className="detail-poster">
+                <img
+                  src={getPosterUrl(detail.poster)}
+                  alt={detail.title}
+                />
+              </div>
+              <div className="detail-info">
+                <h1>{detail.title}</h1>
+                <div className="detail-meta">
+                  <span>{detail.year}</span>
+                  <span>•</span>
+                  <span>{showDetails?.number_of_seasons || 0} Seasons</span>
+                  <span>•</span>
+                  <div className="detail-rating">
+                    <span>★</span>
+                    <span>{detail.rating}</span>
+                  </div>
+                </div>
+                <div className="detail-genres">
+                  {detail.genres.map(genre => (
+                    <span key={genre} className="genre-badge">{genre}</span>
+                  ))}
+                </div>
+                <p className="detail-overview">{detail.overview}</p>
+                <div className="detail-actions">
+                  <button 
+                    className="btn btn-primary" 
+                    onClick={() => setEpisodeModal({ season: selectedSeason, episode: 1 })}
+                  >
+                    ▶ Play Season {selectedSeason}
+                  </button>
+                  <button
+                    className={`btn ${isInWatchlist ? 'btn-primary' : 'btn-secondary'}`}
+                    onClick={() => {
+                      if (isInWatchlist) {
+                        StorageManager.removeFromWatchlist(detail.id);
+                      } else {
+                        StorageManager.addToWatchlist(detail);
+                      }
+                      window.dispatchEvent(new CustomEvent('watchlistUpdated'));
+                    }}
+                  >
+                    {isInWatchlist ? '♥ In Watchlist' : '♡ Add to Watchlist'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tab Navigation */}
+          <div className="detail-container" style={{ marginTop: '2rem', marginBottom: '2rem' }}>
+            <div style={{
+              display: 'flex',
+              gap: '2rem',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+              paddingBottom: '1rem'
+            }}>
+              {['episodes', 'about', 'reviews'].map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: activeTab === tab ? 'var(--accent-color)' : 'var(--secondary-text)',
+                    fontSize: '1rem',
+                    fontWeight: activeTab === tab ? '700' : '500',
+                    cursor: 'pointer',
+                    paddingBottom: activeTab === tab ? '0.5rem' : '0',
+                    borderBottom: activeTab === tab ? '2px solid var(--accent-color)' : 'none',
+                    transition: 'var(--transition)'
+                  }}
+                >
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Episodes Tab */}
+          {activeTab === 'episodes' && (
+            <div className="detail-container" style={{ marginBottom: '3rem' }}>
+              <h3 className="section-title">Seasons & Episodes</h3>
+              {showDetails?.seasons && showDetails.seasons.length > 0 && (
+                <div style={{ marginBottom: '2rem' }}>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--secondary-text)' }}>
+                    Select Season:
+                  </label>
+                  <select
+                    value={selectedSeason}
+                    onChange={(e) => handleSeasonChange(parseInt(e.target.value))}
+                    style={{
+                      padding: '0.6rem 1rem',
+                      borderRadius: '6px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      backgroundColor: 'var(--secondary-bg)',
+                      color: 'white',
+                      fontSize: '1rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {showDetails.seasons
+                      .filter(s => s.season_number > 0)
+                      .map(season => (
+                        <option key={season.season_number} value={season.season_number}>
+                          Season {season.season_number}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                {episodes.length > 0 ? (
+                  episodes.map(ep => (
+                    <div
+                      key={ep.id}
+                      style={{
+                        backgroundColor: 'var(--secondary-bg)',
+                        padding: '1.5rem',
+                        borderRadius: 'var(--border-radius)',
+                        display: 'flex',
+                        gap: '1.5rem'
+                      }}
+                    >
+                      {ep.still_path && (
+                        <img
+                          src={`${CONFIG.TMDB_IMAGE_BASE}/w300${ep.still_path}`}
+                          alt={ep.name}
+                          style={{
+                            width: '200px',
+                            height: '112px',
+                            borderRadius: '6px',
+                            objectFit: 'cover',
+                            flexShrink: 0
+                          }}
+                        />
+                      )}
+                      <div style={{ flex: 1 }}>
+                        <h4 style={{ marginBottom: '0.5rem', fontSize: '1.1rem' }}>
+                          {ep.episode_number}. {ep.name}
+                        </h4>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--secondary-text)', marginBottom: '0.5rem' }}>
+                          {new Date(ep.air_date).toLocaleDateString()} • ★ {ep.vote_average?.toFixed(1) || 'N/A'}
+                        </div>
+                        <p style={{ fontSize: '0.9rem', color: 'var(--secondary-text)', marginBottom: '1rem' }}>
+                          {ep.overview}
+                        </p>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => setEpisodeModal({ season: selectedSeason, episode: ep.episode_number })}
+                        >
+                          ▶ Play Episode {ep.episode_number}
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div style={{ color: 'var(--secondary-text)', textAlign: 'center', padding: '2rem' }}>
+                    No episodes available for this season.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* About Tab */}
+          {activeTab === 'about' && (
+            <div className="detail-container" style={{ marginBottom: '3rem' }}>
+              <h3 className="section-title">About</h3>
+              <div style={{
+                backgroundColor: 'var(--secondary-bg)',
+                padding: '2rem',
+                borderRadius: 'var(--border-radius)'
+              }}>
+                <p style={{ marginBottom: '1.5rem', lineHeight: '1.6' }}>{detail.overview}</p>
+                
+                {showDetails?.networks && showDetails.networks.length > 0 && (
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <h4 style={{ marginBottom: '0.5rem' }}>Networks</h4>
+                    <p style={{ color: 'var(--secondary-text)' }}>
+                      {showDetails.networks.map(n => n.name).join(', ')}
+                    </p>
+                  </div>
+                )}
+
+                {showDetails?.created_by && showDetails.created_by.length > 0 && (
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <h4 style={{ marginBottom: '0.5rem' }}>Creators</h4>
+                    <p style={{ color: 'var(--secondary-text)' }}>
+                      {showDetails.created_by.map(c => c.name).join(', ')}
+                    </p>
+                  </div>
+                )}
+
+                {showDetails?.status && (
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <h4 style={{ marginBottom: '0.5rem' }}>Status</h4>
+                    <p style={{ color: 'var(--secondary-text)' }}>{showDetails.status}</p>
+                  </div>
+                )}
+
+                {showDetails?.episode_run_time && (
+                  <div>
+                    <h4 style={{ marginBottom: '0.5rem' }}>Episode Duration</h4>
+                    <p style={{ color: 'var(--secondary-text)' }}>
+                      {showDetails.episode_run_time[0]} minutes
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Reviews Tab */}
+          {activeTab === 'reviews' && (
+            <div className="detail-container" style={{ marginBottom: '3rem' }}>
+              <h3 className="section-title">Reviews</h3>
+              <div style={{ color: 'var(--secondary-text)', textAlign: 'center', padding: '2rem' }}>
+                No reviews available yet.
+              </div>
+            </div>
+          )}
+
+          {recommendations.length > 0 && (
+            <Row
+              title="More Like This"
+              items={recommendations}
+              onNavigate={onNavigate}
+              onPlay={onPlay}
+            />
+          )}
+        </div>
+      );
+    };
+
+    const HomePage = ({ onNavigate, onPlay }) => {
+      const [data, setData] = useState({
+        featured: [],
+        trending: [],
+        popularMovies: [],
+        topRatedMovies: [],
+        upcomingMovies: [],
+        popularTV: [],
+        topRatedTV: [],
+        actionMovies: [],
+        comedyTV: [],
+        continueWatching: []
+      });
+      const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const [
+              trending,
+              popularMovies,
+              topRatedMovies,
+              upcomingMovies,
+              popularTV,
+              topRatedTV,
+              actionMovies,
+              comedyTV
+            ] = await Promise.all([
+              API.getTrending(),
+              API.getPopularMovies(),
+              API.getTopRatedMovies(),
+              API.getUpcomingMovies(),
+              API.getPopularTV(),
+              API.getTopRatedTV(),
+              API.getMoviesByGenre(28), // Action
+              API.getTVByGenre(35) // Comedy
+            ]);
+
+            setData({
+              featured: trending.slice(0, 5).map(formatItemData),
+              trending: trending.map(formatItemData),
+              popularMovies: popularMovies.map(formatItemData),
+              topRatedMovies: topRatedMovies.map(formatItemData),
+              upcomingMovies: upcomingMovies.map(formatItemData),
+              popularTV: popularTV.map(formatItemData),
+              topRatedTV: topRatedTV.map(formatItemData),
+              actionMovies: actionMovies.map(formatItemData),
+              comedyTV: comedyTV.map(formatItemData),
+              continueWatching: StorageManager.getContinueWatching()
+            });
+          } catch (error) {
+            console.error('Error fetching home data:', error);
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        fetchData();
+
+        const handleWatchlistUpdated = () => {
+          setData(prev => ({
+            ...prev,
+            continueWatching: StorageManager.getContinueWatching()
+          }));
+        };
+
+        window.addEventListener('watchlistUpdated', handleWatchlistUpdated);
+        return () => window.removeEventListener('watchlistUpdated', handleWatchlistUpdated);
+      }, []);
+
+      if (loading) {
+        return (
+          <div className="page-container" style={{ textAlign: 'center', paddingTop: '100px' }}>
+            <div style={{ color: 'white', fontSize: '1.5rem' }}>Loading...</div>
+          </div>
+        );
+      }
+
+      return (
+        <div>
+          <HeroSlider items={data.featured} onNavigate={onNavigate} onPlay={onPlay} />
+          {data.continueWatching.length > 0 && (
+            <Row
+              title="Continue Watching"
+              items={data.continueWatching}
+              onNavigate={onNavigate}
+              onPlay={onPlay}
+            />
+          )}
+          <Row title="Trending Now" items={data.trending} onNavigate={onNavigate} onPlay={onPlay} />
+          <Row title="Popular Movies" items={data.popularMovies} onNavigate={onNavigate} onPlay={onPlay} />
+          <Row title="Popular TV Shows" items={data.popularTV} onNavigate={onNavigate} onPlay={onPlay} />
+          <Row title="Top Rated Movies" items={data.topRatedMovies} onNavigate={onNavigate} onPlay={onPlay} />
+          <Row title="Top Rated TV Shows" items={data.topRatedTV} onNavigate={onNavigate} onPlay={onPlay} />
+          <Row title="Upcoming Movies" items={data.upcomingMovies} onNavigate={onNavigate} onPlay={onPlay} />
+          <Row title="Action Movies" items={data.actionMovies} onNavigate={onNavigate} onPlay={onPlay} />
+          <Row title="Comedy Series" items={data.comedyTV} onNavigate={onNavigate} onPlay={onPlay} />
+        </div>
+      );
+    };
+
+    const MoviesPage = ({ onNavigate, onPlay }) => {
+      const [movies, setMovies] = useState([]);
+      const [filter, setFilter] = useState('popular');
+      const [loading, setLoading] = useState(false);
+      const [page, setPage] = useState(1);
+      const [hasMore, setHasMore] = useState(true);
+      const observerTarget = useRef(null);
+
+      const fetchMoviesPage = useCallback(async (pageNum) => {
+        try {
+          let response;
+          if (filter === 'popular') {
+            response = await axios.get(
+              `${CONFIG.TMDB_BASE_URL}/movie/popular?api_key=${CONFIG.TMDB_API_KEY}&page=${pageNum}`
+            );
+          } else if (filter === 'top-rated') {
+            response = await axios.get(
+              `${CONFIG.TMDB_BASE_URL}/movie/top_rated?api_key=${CONFIG.TMDB_API_KEY}&page=${pageNum}`
+            );
+          } else if (filter === 'upcoming') {
+            response = await axios.get(
+              `${CONFIG.TMDB_BASE_URL}/movie/upcoming?api_key=${CONFIG.TMDB_API_KEY}&page=${pageNum}`
+            );
+          }
+          return response.data.results.map(formatItemData);
+        } catch (error) {
+          console.error('Error fetching movies:', error);
+          return [];
+        }
+      }, [filter]);
+
+      useEffect(() => {
+        setMovies([]);
+        setPage(1);
+        setHasMore(true);
+      }, [filter]);
+
+      useEffect(() => {
+        const loadMore = async () => {
+          if (page === 1) {
+            setLoading(true);
+          }
+          const newMovies = await fetchMoviesPage(page);
+          setMovies(prev => page === 1 ? newMovies : [...prev, ...newMovies]);
+          setHasMore(newMovies.length === 20);
+          setLoading(false);
+        };
+        loadMore();
+      }, [page, fetchMoviesPage]);
+
+      useEffect(() => {
+        const observer = new IntersectionObserver(entries => {
+          if (entries[0].isIntersecting && hasMore && !loading) {
+            setPage(prev => prev + 1);
+          }
+        });
+        if (observerTarget.current) {
+          observer.observe(observerTarget.current);
+        }
+        return () => observer.disconnect();
+      }, [hasMore, loading]);
+
+      return (
+        <div className="page-container">
+          <h1 className="page-title">Movies</h1>
+          <div className="filter-bar">
+            <button
+              className={`filter-btn ${filter === 'popular' ? 'active' : ''}`}
+              onClick={() => setFilter('popular')}
+            >
+              Popular
+            </button>
+            <button
+              className={`filter-btn ${filter === 'top-rated' ? 'active' : ''}`}
+              onClick={() => setFilter('top-rated')}
+            >
+              Top Rated
+            </button>
+            <button
+              className={`filter-btn ${filter === 'upcoming' ? 'active' : ''}`}
+              onClick={() => setFilter('upcoming')}
+            >
+              Upcoming
+            </button>
+          </div>
+          <div className="content-grid">
+            {movies.map(item => (
+              <Card
+                key={item.id}
+                item={item}
+                onNavigate={onNavigate}
+                onPlay={onPlay}
+              />
+            ))}
+          </div>
+          <div ref={observerTarget} style={{ height: '20px', marginTop: '2rem' }} />
+          {loading && page > 1 && (
+            <div style={{ textAlign: 'center', color: 'white', padding: '2rem' }}>
+              Loading more...
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    const TVPage = ({ onNavigate, onPlay }) => {
+      const [shows, setShows] = useState([]);
+      const [filter, setFilter] = useState('popular');
+      const [loading, setLoading] = useState(false);
+      const [page, setPage] = useState(1);
+      const [hasMore, setHasMore] = useState(true);
+      const observerTarget = useRef(null);
+
+      const fetchShowsPage = useCallback(async (pageNum) => {
+        try {
+          let response;
+          if (filter === 'popular') {
+            response = await axios.get(
+              `${CONFIG.TMDB_BASE_URL}/tv/popular?api_key=${CONFIG.TMDB_API_KEY}&page=${pageNum}`
+            );
+          } else if (filter === 'top-rated') {
+            response = await axios.get(
+              `${CONFIG.TMDB_BASE_URL}/tv/top_rated?api_key=${CONFIG.TMDB_API_KEY}&page=${pageNum}`
+            );
+          }
+          return response.data.results.map(formatItemData);
+        } catch (error) {
+          console.error('Error fetching TV shows:', error);
+          return [];
+        }
+      }, [filter]);
+
+      useEffect(() => {
+        setShows([]);
+        setPage(1);
+        setHasMore(true);
+      }, [filter]);
+
+      useEffect(() => {
+        const loadMore = async () => {
+          if (page === 1) {
+            setLoading(true);
+          }
+          const newShows = await fetchShowsPage(page);
+          setShows(prev => page === 1 ? newShows : [...prev, ...newShows]);
+          setHasMore(newShows.length === 20);
+          setLoading(false);
+        };
+        loadMore();
+      }, [page, fetchShowsPage]);
+
+      useEffect(() => {
+        const observer = new IntersectionObserver(entries => {
+          if (entries[0].isIntersecting && hasMore && !loading) {
+            setPage(prev => prev + 1);
+          }
+        });
+        if (observerTarget.current) {
+          observer.observe(observerTarget.current);
+        }
+        return () => observer.disconnect();
+      }, [hasMore, loading]);
+
+      return (
+        <div className="page-container">
+          <h1 className="page-title">TV Shows</h1>
+          <div className="filter-bar">
+            <button
+              className={`filter-btn ${filter === 'popular' ? 'active' : ''}`}
+              onClick={() => setFilter('popular')}
+            >
+              Popular
+            </button>
+            <button
+              className={`filter-btn ${filter === 'top-rated' ? 'active' : ''}`}
+              onClick={() => setFilter('top-rated')}
+            >
+              Top Rated
+            </button>
+          </div>
+          <div className="content-grid">
+            {shows.map(item => (
+              <Card
+                key={item.id}
+                item={item}
+                onNavigate={onNavigate}
+                onPlay={onPlay}
+              />
+            ))}
+          </div>
+          <div ref={observerTarget} style={{ height: '20px', marginTop: '2rem' }} />
+          {loading && page > 1 && (
+            <div style={{ textAlign: 'center', color: 'white', padding: '2rem' }}>
+              Loading more...
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    const TrendingPage = ({ onNavigate, onPlay }) => {
+      const [items, setItems] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [page, setPage] = useState(1);
+      const [hasMore, setHasMore] = useState(true);
+      const observerTarget = useRef(null);
+
+      const fetchTrendingPage = useCallback(async (pageNum) => {
+        try {
+          const response = await axios.get(
+            `${CONFIG.TMDB_BASE_URL}/trending/all/week?api_key=${CONFIG.TMDB_API_KEY}&page=${pageNum}`
+          );
+          return response.data.results.map(formatItemData);
+        } catch (error) {
+          console.error('Error fetching trending:', error);
+          return [];
+        }
+      }, []);
+
+      useEffect(() => {
+        const loadMore = async () => {
+          if (page === 1) {
+            setLoading(true);
+          }
+          const newItems = await fetchTrendingPage(page);
+          setItems(prev => page === 1 ? newItems : [...prev, ...newItems]);
+          setHasMore(newItems.length === 20);
+          setLoading(false);
+        };
+        loadMore();
+      }, [page, fetchTrendingPage]);
+
+      useEffect(() => {
+        const observer = new IntersectionObserver(entries => {
+          if (entries[0].isIntersecting && hasMore && !loading) {
+            setPage(prev => prev + 1);
+          }
+        });
+        if (observerTarget.current) {
+          observer.observe(observerTarget.current);
+        }
+        return () => observer.disconnect();
+      }, [hasMore, loading]);
+
+      return (
+        <div className="page-container">
+          <h1 className="page-title">Trending Now</h1>
+          <div className="content-grid">
+            {items.map(item => (
+              <Card
+                key={item.id}
+                item={item}
+                onNavigate={onNavigate}
+                onPlay={onPlay}
+              />
+            ))}
+          </div>
+          <div ref={observerTarget} style={{ height: '20px', marginTop: '2rem' }} />
+          {loading && page > 1 && (
+            <div style={{ textAlign: 'center', color: 'white', padding: '2rem' }}>
+              Loading more...
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    const SearchPage = ({ query, onNavigate, onPlay }) => {
+      const [results, setResults] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [page, setPage] = useState(1);
+      const [hasMore, setHasMore] = useState(true);
+      const observerTarget = useRef(null);
+
+      const performSearchPage = useCallback(async (pageNum) => {
+        try {
+          const response = await axios.get(
+            `${CONFIG.TMDB_BASE_URL}/search/multi?api_key=${CONFIG.TMDB_API_KEY}&query=${encodeURIComponent(query)}&page=${pageNum}`
+          );
+          return response.data.results.filter(result => result.media_type !== 'person').map(formatItemData);
+        } catch (error) {
+          console.error('Error searching:', error);
+          return [];
+        }
+      }, [query]);
+
+      useEffect(() => {
+        setResults([]);
+        setPage(1);
+        setHasMore(true);
+      }, [query]);
+
+      useEffect(() => {
+        const loadMore = async () => {
+          if (page === 1) {
+            setLoading(true);
+          }
+          if (query) {
+            const newResults = await performSearchPage(page);
+            setResults(prev => page === 1 ? newResults : [...prev, ...newResults]);
+            setHasMore(newResults.length > 0);
+            setLoading(false);
+          }
+        };
+        loadMore();
+      }, [page, performSearchPage, query]);
+
+      useEffect(() => {
+        const observer = new IntersectionObserver(entries => {
+          if (entries[0].isIntersecting && hasMore && !loading && query) {
+            setPage(prev => prev + 1);
+          }
+        });
+        if (observerTarget.current) {
+          observer.observe(observerTarget.current);
+        }
+        return () => observer.disconnect();
+      }, [hasMore, loading, query]);
+
+      if (!query) {
+        return (
+          <div className="page-container">
+            <h1 className="page-title">Search</h1>
+            <div className="empty-state">
+              <div className="empty-state-icon">🔍</div>
+              <div className="empty-state-text">Enter a search query to find movies and TV shows</div>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="page-container">
+          <h1 className="page-title">Search Results for "{query}"</h1>
+          {loading && page === 1 ? (
+            <div style={{ textAlign: 'center', color: 'white', fontSize: '1.5rem', padding: '3rem' }}>
+              Loading...
+            </div>
+          ) : results.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-state-icon">🔍</div>
+              <div className="empty-state-title">No Results Found</div>
+              <div className="empty-state-text">Try searching for a different movie or TV show</div>
+            </div>
+          ) : (
+            <>
+              <div className="content-grid">
+                {results.map(item => (
+                  <Card
+                    key={item.id}
+                    item={item}
+                    onNavigate={onNavigate}
+                    onPlay={onPlay}
+                  />
+                ))}
+              </div>
+              <div ref={observerTarget} style={{ height: '20px', marginTop: '2rem' }} />
+              {loading && page > 1 && (
+                <div style={{ textAlign: 'center', color: 'white', padding: '2rem' }}>
+                  Loading more...
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      );
+    };
+
+    const WatchlistPage = ({ onNavigate, onPlay }) => {
+      const [watchlist, setWatchlist] = useState(StorageManager.getWatchlist());
+
+      useEffect(() => {
+        const handleWatchlistUpdated = () => {
+          setWatchlist(StorageManager.getWatchlist());
+        };
+
+        window.addEventListener('watchlistUpdated', handleWatchlistUpdated);
+        return () => window.removeEventListener('watchlistUpdated', handleWatchlistUpdated);
+      }, []);
+
+      return (
+        <div className="page-container">
+          <h1 className="page-title">My Watchlist</h1>
+          {watchlist.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-state-icon">♡</div>
+              <div className="empty-state-title">Your Watchlist is Empty</div>
+              <div className="empty-state-text">Add movies and TV shows to your watchlist to watch them later</div>
+              <button
+                className="btn btn-primary"
+                onClick={() => onNavigate('home')}
+              >
+                Start Browsing
+              </button>
+            </div>
+          ) : (
+            <div className="content-grid">
+              {watchlist.map(item => (
+                <Card
+                  key={item.id}
+                  item={item}
+                  onNavigate={onNavigate}
+                  onPlay={onPlay}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // ========== MAIN APP ==========
+    const App = () => {
+      const [page, setPage] = useState('home');
+      const [params, setParams] = useState({});
+      const [playerItem, setPlayerItem] = useState(null);
+
+      const navigate = (newPage, newParams = {}) => {
+        setPage(newPage);
+        setParams(newParams);
+        window.scrollTo(0, 0);
+      };
+
+      const renderPage = () => {
+        switch (page) {
+          case 'home':
+            return <HomePage onNavigate={navigate} onPlay={setPlayerItem} />;
+          case 'movies':
+            return <MoviesPage onNavigate={navigate} onPlay={setPlayerItem} />;
+          case 'tv':
+            return <TVPage onNavigate={navigate} onPlay={setPlayerItem} />;
+          case 'trending':
+            return <TrendingPage onNavigate={navigate} onPlay={setPlayerItem} />;
+          case 'watchlist':
+            return <WatchlistPage onNavigate={navigate} onPlay={setPlayerItem} />;
+          case 'search':
+            return <SearchPage query={params.q} onNavigate={navigate} onPlay={setPlayerItem} />;
+          case 'detail-movie':
+            return <DetailPage type="movie" id={params.id} onNavigate={navigate} onPlay={setPlayerItem} />;
+          case 'detail-tv':
+            return <DetailPage type="tv" id={params.id} onNavigate={navigate} onPlay={setPlayerItem} />;
+          default:
+            return <HomePage onNavigate={navigate} onPlay={setPlayerItem} />;
+        }
+      };
+
+      return (
+        <>
+          <Navbar currentPage={page.split('-')[0]} onNavigate={navigate} />
+          {renderPage()}
+          {playerItem && (
+            <Player
+              item={playerItem}
+              onClose={() => setPlayerItem(null)}
+            />
+          )}
+        </>
+      );
+    };
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
