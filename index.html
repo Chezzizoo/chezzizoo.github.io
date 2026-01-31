@@ -1307,7 +1307,7 @@
 
     const Player = ({ item, onClose }) => {
       const getStreamUrl = (movie) => {
-        return `https://rivestream.org/embed?type=movie&id=${movie.tmdbId}`;
+        return `https://cinemaos.tech/player/${movie.tmdb_id}`;
       };
 
       const streamUrl = getStreamUrl(item);
