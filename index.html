@@ -773,8 +773,8 @@
       TMDB_API_KEY: 'b03e524ee12ec2c9b8a5e82add72cb8d',
       TMDB_BASE_URL: 'https://api.themoviedb.org/3',
       TMDB_IMAGE_BASE: 'https://image.tmdb.org/t/p',
-      STREAMING_API_MOVIE: 'https://cinemaos.tech/player/{tmdb_id}',
-      STREAMING_API_TV: 'https://cinemaos.tech/player/{tmdb_id}/{season_number}/{episode_number}'
+      STREAMING_API_MOVIE: 'https://apicinetaro.falex43350.workers.dev/movie/{tmdb_id}/english',
+      STREAMING_API_TV: 'https://apicinetaro.falex43350.workers.dev/tv/{tmdb_id}/{season_number}/{episode_number}/english'
     };
 
     // ========== STORAGE UTILITIES ==========
@@ -990,9 +990,9 @@
     const EpisodeModal = ({ type, item, season, episode, onClose }) => {
       const getEmbedUrl = () => {
         if (item.type === 'movie') {
-          return `https://cinemaos.tech/player/${item.tmdbId}`;
+          return `https://apicinetaro.falex43350.workers.dev/movie/${item.tmdb_id}/english`;
         }
-        return `https://cinemaos.tech/player/${item.tmdbId}/${season}/${episode}`;
+        return `https://apicinetaro.falex43350.workers.dev/tv/${item.tmdb_id}/${season_number}/${episode_number}/english`;
       };
 
       return (
@@ -1307,7 +1307,7 @@
 
     const Player = ({ item, onClose }) => {
       const getStreamUrl = (movie) => {
-        return `https://cinemaos.tech/player/${movie.tmdb_id}`;
+        return `https://apicinetaro.falex43350.workers.dev/movie/${movie.tmdb_id}/english`;
       };
 
       const streamUrl = getStreamUrl(item);
