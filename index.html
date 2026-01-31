@@ -773,8 +773,8 @@
       TMDB_API_KEY: 'b03e524ee12ec2c9b8a5e82add72cb8d',
       TMDB_BASE_URL: 'https://api.themoviedb.org/3',
       TMDB_IMAGE_BASE: 'https://image.tmdb.org/t/p',
-      STREAMING_API_MOVIE: 'https://vidup.to/movie/{tmdbId}?autoPlay=true',
-      STREAMING_API_TV: 'https://vidup.to/tv/{tmdbId}/{season}/{episode}?autoPlay=true'
+      STREAMING_API_MOVIE: 'https://cinemaos.tech/player/{tmdbId}?autoPlay=true',
+      STREAMING_API_TV: 'https://cinemaos.tech/player/{tmdbId}/{season}/{episode}'
     };
 
     // ========== STORAGE UTILITIES ==========
@@ -990,9 +990,9 @@
     const EpisodeModal = ({ type, item, season, episode, onClose }) => {
       const getEmbedUrl = () => {
         if (item.type === 'movie') {
-          return `https://vidup.to/movie/${item.tmdbId}?autoPlay=true`;
+          return `https://cinemaos.tech/player/${item.tmdbId}?autoPlay=true`;
         }
-        return `https://vidup.to/tv/${item.tmdbId}/${season}/${episode}?autoPlay=true`;
+        return `https://cinemaos.tech/player/${item.tmdbId}/${season}/${episode}`;
       };
 
       return (
@@ -1307,7 +1307,7 @@
 
     const Player = ({ item, onClose }) => {
       const getStreamUrl = (movie) => {
-        return `https://vidup.to/movie/${movie.tmdbId}?autoPlay=true`;
+        return `https://cinemaos.tech/player${movie.tmdbId}?autoPlay=true`;
       };
 
       const streamUrl = getStreamUrl(item);
