@@ -1,7 +1,44 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <title>Redirecting...</title>
-<meta http-equiv="refresh" content="0;URL=https://shuttletv.su/">
-<link rel="canonical" href="https://shuttletv.su/">
-<script>window.location.replace('https://shuttletv.su/');</script>
+<link rel="canonical" href="https://xprime.today/">
 
+<style>
+  #warning-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #ffcc00;
+    color: #000;
+    padding: 12px 16px;
+    font-family: sans-serif;
+    font-size: 14px;
+    text-align: center;
+    z-index: 9999;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+  }
+  #warning-bar button {
+    margin-left: 12px;
+    padding: 6px 12px;
+    border: none;
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 3px;
+  }
+</style>
+
+<div id="warning-bar">
+  Please turn off ads in settings before continuing.
+  <button id="warning-ok">OK</button>
+</div>
+
+<script>
+  document.getElementById('warning-ok').addEventListener('click', function () {
+    // optional: hide the bar immediately
+    document.getElementById('warning-bar').style.display = 'none';
+    // now redirect
+    window.location.replace('https://xprime.today/');
+  });
+</script>
